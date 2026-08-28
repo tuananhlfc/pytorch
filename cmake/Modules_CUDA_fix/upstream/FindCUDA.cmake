@@ -812,7 +812,9 @@ set (CUDA_NVCC_INCLUDE_DIRS_USER "")
 set (CUDA_INCLUDE_DIRS ${CUDA_TOOLKIT_INCLUDE})
 
 macro(cuda_find_library_local_first_with_path_ext _var _names _doc _path_ext )
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  if(WIN32 AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
+    set(_cuda_64bit_lib_dir "${_path_ext}lib/arm64")
+  elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
     # CUDA 3.2+ on Windows moved the library directories, so we need the new
     # and old paths.
     set(_cuda_64bit_lib_dir "${_path_ext}lib/x64" "${_path_ext}lib64" "${_path_ext}libx64" )

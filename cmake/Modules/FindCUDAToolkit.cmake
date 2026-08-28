@@ -813,13 +813,20 @@ if(NOT EXISTS "${CUDAToolkit_INCLUDE_DIR}/cublas_v2.h")
 endif()
 
 # Find the CUDA Runtime Library libcudart
+if(WIN32 AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
+  set(_CUDAToolkit_win_lib_dir lib/arm64)
+  set(_CUDAToolkit_win_stub_dir lib/arm64/stubs)
+else()
+  set(_CUDAToolkit_win_lib_dir lib/x64)
+  set(_CUDAToolkit_win_stub_dir lib/x64/stubs)
+endif()
 find_library(CUDA_CUDART
   NAMES cudart
-  PATH_SUFFIXES lib64 lib/x64
+  PATH_SUFFIXES lib64 ${_CUDAToolkit_win_lib_dir}
 )
 find_library(CUDA_CUDART
   NAMES cudart
-  PATH_SUFFIXES lib64/stubs lib/x64/stubs
+  PATH_SUFFIXES lib64/stubs ${_CUDAToolkit_win_stub_dir}
 )
 
 if(NOT CUDA_CUDART AND NOT CUDAToolkit_FIND_QUIETLY)
@@ -871,7 +878,7 @@ if(CUDAToolkit_FOUND)
       HINTS ${CUDAToolkit_LIBRARY_DIR}
             ENV CUDA_PATH
             ${arg_EXTRA_HINTS}
-      PATH_SUFFIXES nvidia/current lib64 lib/x64 lib
+      PATH_SUFFIXES nvidia/current lib64 ${_CUDAToolkit_win_lib_dir} lib
                     ${arg_EXTRA_PATH_SUFFIXES}
     )
     # Don't try any stub directories until we have exhausted all other
@@ -881,7 +888,7 @@ if(CUDAToolkit_FOUND)
       HINTS ${CUDAToolkit_LIBRARY_DIR}
             ENV CUDA_PATH
             ${arg_EXTRA_HINTS}
-      PATH_SUFFIXES lib64/stubs lib/x64/stubs lib/stubs stubs
+      PATH_SUFFIXES lib64/stubs ${_CUDAToolkit_win_stub_dir} lib/stubs stubs
                     # Support NVHPC splayed math library layout
                     ../../math_libs/${CUDAToolkit_VERSION_MAJOR}.${CUDAToolkit_VERSION_MINOR}/lib64
                     ../../math_libs/lib64

@@ -819,6 +819,11 @@ if(NOT EMSCRIPTEN AND NOT INTERN_BUILD_MOBILE)
     set(SLEEF_BUILD_TESTS OFF CACHE BOOL "Don't build sleef tests" FORCE)
     set(SLEEF_BUILD_SCALAR_LIB OFF CACHE BOOL "libsleefscalar will be built." FORCE)
     set(SLEEF_DISABLE_OPENMP ON CACHE BOOL "OpenMP only used by sleef DFT and tests, both disabled" FORCE)
+    if(MSVC AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
+      # MSVC provides arm_sve.h, so SLEEF's compile probe succeeds, but it does
+      # not provide the SVE target flags/macros required by SLEEF's SVE sources.
+      set(SLEEF_DISABLE_SVE ON CACHE BOOL "MSVC does not support SLEEF SVE builds" FORCE)
+    endif()
     if(WIN32)
       set(SLEEF_BUILD_WITH_LIBM OFF CACHE BOOL "Don't build sleef with libm for Windows." FORCE)
     endif()
