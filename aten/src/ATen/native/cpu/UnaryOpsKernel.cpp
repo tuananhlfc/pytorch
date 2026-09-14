@@ -80,16 +80,6 @@ void VmlLog(int64_t N, const T* X, T* Y) {
   });
 }
 
-template <>
-void VmlLog<float>(int64_t N, const float* X, float* Y) {
-  vsLn(N, X, Y);
-}
-
-template <>
-void VmlLog<double>(int64_t N, const double* X, double* Y) {
-  vdLn(N, X, Y);
-}
-
 template <typename T>
 void LogitMKLKernel(T eps, TensorIteratorBase* it) {
   if (!it->can_use_32bit_indexing()) {
